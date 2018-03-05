@@ -1,5 +1,7 @@
 <?php
 
+namespace Laclasse;
+
 /**
  * Met à jour la table d'administration des sites pour l'utilisateur venant de
  * se connecter
@@ -15,7 +17,7 @@ function populateUserAdminSite($user_data) {
             FROM ".TABLE_PREFIX."_j_useradmin_site admin_site
             RIGHT JOIN ".TABLE_PREFIX."_site site
             ON site.id = admin_site.id_site
-            AND admin_site.login = '$user_data->login'
+            AND admin_site.login = '$user_data->id'
 			ORDER BY sitecode ASC";
     $resultat = grr_sql_query($sql);
 
@@ -38,12 +40,11 @@ function populateUserAdminSite($user_data) {
                 // Ajouter la ligne dans grr_j_useradmin_site
                 $sql = "INSERT INTO ".TABLE_PREFIX."_j_useradmin_site
                         (login, id_site)
-                        VALUES('$user_data->login',$useradmin_site->id)";
+                        VALUES('$user_data->id',$useradmin_site->id)";
                 grr_sql_command($sql);
             } else if(isset($useradmin_site) ){
                 // Supprimer de la liste des elements
                 $useradmin_site_rows = array_udiff($useradmin_site_rows, array($useradmin_site), 'equals_objects');
-                
             }
         }
     }
@@ -73,7 +74,7 @@ function selectDefaultSite($user_data) {
     })[0];
     $sql = "SELECT id FROM " . TABLE_PREFIX . "_site where sitecode='$actif_profiles->structure_id'";
     $site_id = grr_sql_query1($sql);
-    $sql = "UPDATE " . TABLE_PREFIX . "_utilisateurs SET default_site = '$site_id' WHERE login='$user_data->login'";
+    $sql = "UPDATE " . TABLE_PREFIX . "_utilisateurs SET default_site = '$site_id' WHERE login='$user_data->id'";
     grr_sql_command($sql);
 }
 

@@ -1,7 +1,11 @@
 <?php
-/*
-  * Fonction d'envoi d'un GET http vers l'annuaire ENT.
-  */
+namespace Laclasse;
+
+require_once('config.inc.php');
+
+/**
+ * Fonction d'envoi d'un GET http vers l'annuaire ENT.
+ */
 function interroger_annuaire_ENT($url_api, $app_id, $api_key, $params = array()) {
      $query_string = "";
      foreach ($params as $k => $v) $query_string .= urlencode($k)."=".urlencode ($v)."&";

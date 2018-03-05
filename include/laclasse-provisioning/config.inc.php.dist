@@ -1,4 +1,6 @@
 <?php
+
+namespace Laclasse;
 //
 // Laclasse address book configuration file
 //

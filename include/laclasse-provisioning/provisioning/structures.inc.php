@@ -1,21 +1,23 @@
 <?php
 
+namespace Laclasse;
+
 /**
  * Récupère les structures d'un utilisateur dans l'annuaire,
  * et selon leur présence dans la base de GRR, va les créer
  * ou les mettre à jour
  *
  * @param [array] $cfg: la configurateur
- * @param [string] $laclasse_user_id : l'id de l'utilisateur 
+ * @param [string] $login : l'id de l'utilisateur 
  * venant de se connecter via SSO
  * @return void
  */
-function populateSites($cfg, $laclasse_user_id)
+function populateSites($cfg, $login)
 {
     $user_structures = json_decode(interroger_annuaire_ENT(
         $cfg['laclasse_addressbook_api_etab'],
         $cfg['laclasse_addressbook_app_id'], $cfg['laclasse_addressbook_api_key'],
-        array("profiles.user_id" => $laclasse_user_id)));
+        array("profiles.user_id" => $login)));
 
     foreach ($user_structures as $structure) {
         // Création de la requête
