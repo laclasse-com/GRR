@@ -55,24 +55,32 @@ if ($_GET['pview'] != 1)
 		echo "\n<div class=\"col-lg-12 col-md-12 col-xs-12\">\n".PHP_EOL;
 	}
 
+	// Added by Nelson in order to change the way the sites are displayed even though
+	// PHP doesn't allow for user-defined function overloading, could probably be done
+	// in a better way, however I don't want to spend much time on this
+	// so I'll put the namepace to use the function I defined in the file included below
+	if (file_exists("./include/laclasse-provisioning/grr/grr_make_site_html.inc.php")) {
+		include("./include/laclasse-provisioning/grr/grr_make_site_html.inc.php");
+	}
+
 	if ($area_list_format != "list")
 	{
 		if ($area_list_format == "select")
 		{
-			echo make_site_select_html($pageTout, $id_site, $year, $month, $day, getUserName());
+			echo Laclasse\make_site_select_html($pageTout, $id_site, $year, $month, $day, getUserName());
 			echo make_area_select_html($pageTout, $id_site, $area, $year, $month, $day, getUserName());
 			echo make_room_select_html($pageSimple, $area, $room, $year, $month, $day);
 		}
 		else
 		{
-			echo make_site_item_html($pageTout, $id_site, $year, $month, $day, getUserName());
+			echo Laclasse\make_site_item_html($pageTout, $id_site, $year, $month, $day, getUserName());
 			echo make_area_item_html($pageTout,$id_site, $area, $year, $month, $day, getUserName());
 			echo make_room_item_html($pageSimple, $area, $room, $year, $month, $day);
 		}
 	}
 	else
 	{
-		echo make_site_list_html($pageTout,$id_site,$year,$month,$day,getUserName());
+		echo Laclasse\make_site_list_html($pageTout,$id_site,$year,$month,$day,getUserName());
 		echo make_area_list_html($pageTout,$id_site, $area, $year, $month, $day, getUserName());
 		echo make_room_list_html($pageSimple.".php", $area, $room, $year, $month, $day);
 	}
