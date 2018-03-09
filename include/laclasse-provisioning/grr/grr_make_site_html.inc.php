@@ -41,39 +41,10 @@ function make_site_select_html($link, $current_site, $year, $month, $day, $user)
 		{
 			// If you're not supposed to have access just go to next iteration
 			if(authUserAccesSite($user_data, $row[2]) == false) continue;
-			$nb_sites_a_afficher++;
-			
-
-			// Pour chaque site, on détermine le premier domaine disponible
-			$sql = "SELECT id_area
-			FROM ".TABLE_PREFIX."_j_site_area
-			WHERE ".TABLE_PREFIX."_j_site_area.id_site='".$row[0]."'";
-			$res2 = grr_sql_query($sql);
-							// A on un résultat ?
-			$default_area = -1;
-			if ($res2 && grr_sql_count($res2) > 0)
-			{
-				for ($j = 0; ($row2 = grr_sql_row($res2, $j)); $j++)
-				{
-					if (authUserAccesArea($user,$row2[0]) == 1)
-					{
-						// on a trouvé un domaine autorisé
-						$default_area = $row2[0];
-						$j = grr_sql_count($res2) + 1;
-						// On arrête la boucle
-					}
-				}
-			}
-			// On libère la ressource2
-			grr_sql_free($res2);
-			if ($default_area != -1)
-			{
-				// on affiche le site uniquement si au moins un domaine est visible par l'utilisateur
-				$nb_sites_a_afficher++;
-				$selected = ($row[0] == $current_site) ? 'selected="selected"' : '';
-				$link2 = $link.'?year='.$year.'&amp;month='.$month.'&amp;day='.$day.'&amp;area='.$default_area;
-				$out_html .= '<option '.$selected.' value="'.$link2.'">'.htmlspecialchars($row[1]).'</option>'.PHP_EOL;
-			}
+			$nb_sites_a_afficher++;	
+			$selected = ($row[0] == $current_site) ? 'selected="selected"' : '';
+			$link2 = $link.'?year='.$year.'&amp;month='.$month.'&amp;day='.$day.'&amp;area='.$default_area;
+			$out_html .= '<option '.$selected.' value="'.$link2.'">'.htmlspecialchars($row[1]).'</option>'.PHP_EOL;
 		}
 	}
 	if ($nb_sites_a_afficher > 1)
@@ -135,43 +106,16 @@ function make_site_list_html($link, $current_site, $year, $month, $day,$user)
 			if(authUserAccesSite($user_data, $row[2]) == false) continue;
 			$nb_sites_a_afficher++;
 
-			// Pour chaque site, on détermine s'il y a des domaines visibles par l'utilisateur
-			$sql = "SELECT id_area
-					FROM ".TABLE_PREFIX."_j_site_area
-					WHERE ".TABLE_PREFIX."_j_site_area.id_site='".$row[0]."'";
-			$res2 = grr_sql_query($sql);
-			$au_moins_un_domaine = false;
-			if ($res2 && grr_sql_count($res2) > 0)
+			if ($row[0] == $current_site)
 			{
-				for ($j = 0; ($row2 = grr_sql_row($res2, $j)); $j++)
-				{
-					if (authUserAccesArea($user,$row2[0]) == 1)
-					{
-						// on a trouvé un domaine autorisé
-						$au_moins_un_domaine = true;
-						$j = grr_sql_count($res2) + 1;
-						// On arrête la boucle
-					}
-				}
-			}
-			// On libère la ressource2
-			grr_sql_free($res2);
-			if ($au_moins_un_domaine)
+				$out_html .= '
+				<b><a id="liste_select"   href="'.$link.'?year='.$year.'&amp;month='.$month.'&amp;day='.$day.'&amp;id_site='.$row[0].'" title="'.$row[1].'">&gt; '.htmlspecialchars($row[1]).'</a></b>
+				<br />'."\n";
+			} else
 			{
-				// on affiche le site uniquement si au moins un domaine est visible par l'utilisateur
-				$nb_sites_a_afficher++;
-				if ($row[0] == $current_site)
-				{
-					$out_html .= '
-					<b><a id="liste_select"   href="'.$link.'?year='.$year.'&amp;month='.$month.'&amp;day='.$day.'&amp;id_site='.$row[0].'" title="'.$row[1].'">&gt; '.htmlspecialchars($row[1]).'</a></b>
-					<br />'."\n";
-				}
-				else
-				{
-					$out_html .= '
-					<a id="liste"  href="'.$link.'?year='.$year.'&amp;month='.$month.'&amp;day='.$day.'&amp;id_site='.$row[0].'" title="'.$row[1].'">'.htmlspecialchars($row[1]).'</a>
-					<br />'."\n";
-				}
+				$out_html .= '
+				<a id="liste"  href="'.$link.'?year='.$year.'&amp;month='.$month.'&amp;day='.$day.'&amp;id_site='.$row[0].'" title="'.$row[1].'">'.htmlspecialchars($row[1]).'</a>
+				<br />'."\n";
 			}
 		}
 	}
@@ -273,7 +217,7 @@ function make_site_item_html($link, $current_site, $year, $month, $day, $user)
 function authUserAccesSite($user_data,$sitecode) {
 	// For debug purpose so I don't have to use another account
 	// cause me from the past is lazy too
-	// if($user_data->super_admin) return true;
+	if($user_data->super_admin) return true;
 
 	$filtered_array = array_filter($user_data->profiles , function($profile) use ($sitecode){
 		return $profile->structure_id == $sitecode;

@@ -31,33 +31,65 @@
 * $user_code_fonction
 * $user_libelle_fonction
 * $user_mail
-* $user_default_style
 * $login = phpCAS::getAttribute('uid');
 */
 
 namespace Laclasse;
 
 require_once('laclasse_api.inc.php');
+require_once("provisioning/profiles_types.inc.php");
+require_once("provisioning/structures.inc.php");
+require_once("grr/account.inc.php");
 
-// Récupération de l'utilisateur pour récupérer 
-// - id
-// - super_admin
-// - profiles
+// Get other useful data that the CAS Response doesn't send
 $user_data = json_decode(interroger_annuaire_ENT(
     $cfg['laclasse_addressbook_api_user'] . $login,
     $cfg['laclasse_addressbook_app_id'],
     $cfg['laclasse_addressbook_api_key']));
-    
-require_once("provisioning/profiles_types.inc.php");
-populateCorrespondanceStatus($cfg);
-    
-require_once("provisioning/structures.inc.php");
-populateSites($cfg, $login);
-    
-$user_code_fonction = highestLaclasseProfile($user_data);
 
-    
-    
-require_once("grr/grr_statut_utilisateur.inc.php");
-selectDefaultSite($user_data);
-populateUserAdminSite($user_data);  
+$user_default_site = get_user_default_site($user_data);    
+// Checks who is trying to login, no need to provide anything if he's forbidden
+$user_code_fonction = highestLaclasseProfile($user_data);
+$user_statut = statut_grrFromLaclasseProfile($user_code_fonction);
+if(!isset($user_statut)) {
+    // Show error screen or move that further down
+    // TODO Create an error page   
+    $redirect_url = url_origin($_SERVER);
+    include "forbidden.php";
+    die;
+}
+
+
+// Create object that contains user info
+if(!isset($user_default_site)) {
+    $user_default_site = 0;
+}
+$cas_tab_login["user_default_site"] = $user_default_site;
+if (!isset($user_nom))
+	$user_nom='';
+$cas_tab_login["user_nom"] = $user_nom;
+if (!isset($user_prenom))
+	$user_prenom='';
+$cas_tab_login["user_prenom"] = $user_prenom;
+if (!isset($user_mail))
+	$user_mail='';
+$cas_tab_login["user_email"] = $user_mail;
+if (!isset($user_statut))
+	$user_statut='';
+$cas_tab_login["user_statut"] = $user_statut;
+if (!isset($user_libelle_fonction))
+	$user_libelle_fonction='';
+$cas_tab_login["user_libelle_fonction"] = $user_libelle_fonction;
+if (!isset($user_language))
+	$user_language='';
+$cas_tab_login["user_language"] = $user_language;
+if (!isset($user_default_style))
+	$user_default_style='';
+$cas_tab_login["user_default_style"] = $user_default_style;
+
+
+populateSites($cfg, $login);
+// Create or update the account
+handle_laclasse_sso_login($login, $cas_tab_login);
+populate_user_admin_site($user_data);  
+populate_user_site($user_data);
