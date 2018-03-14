@@ -10,11 +10,10 @@
     </head>
     <body> 
         <div class="cover">
-            <h1>Accès non autorisé <small>Erreur 403</small></h1>
+            <h1><?php echo Settings::get('company'); ?></h1>
+            <h2>Accès non autorisé <small>Erreur 403</small></h2>
             <p class="lead">
                 <?php echo Settings::get('message_home_page'); ?>
-                Vous n'avez pas les droits suffisants pour utiliser GRR. Seul le personnel de l'établissement peut avoir accès à cet outil.
-                Si vous êtes un personnel d'établissement, veuillez vous adresser à l'administrateur de votre établissement
             </p>
         </div>
         <footer><p>Retour sur <a href="<?php echo $redirect_url ?>">Laclasse.com</a></p></footer>

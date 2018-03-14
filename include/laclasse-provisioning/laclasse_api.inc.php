@@ -1,8 +1,6 @@
 <?php
 namespace Laclasse;
 
-require_once('config.inc.php');
-
 /**
  * Fonction d'envoi d'un GET http vers l'annuaire ENT.
  *

@@ -2,21 +2,22 @@
 
 namespace Laclasse;
 
+use \Settings;
+
 /**
  * Récupère les structures d'un utilisateur dans l'annuaire,
  * et selon leur présence dans la base de GRR, va les créer
  * ou les mettre à jour
  *
- * @param [array] $cfg: la configurateur
  * @param [string] $login : l'id de l'utilisateur 
  * venant de se connecter via SSO
  * @return void
  */
-function populateSites($cfg, $login)
+function populateSites($login)
 {
     $user_structures = json_decode(interroger_annuaire_ENT(
-        $cfg['laclasse_addressbook_api_etab'],
-        $cfg['laclasse_addressbook_app_id'], $cfg['laclasse_addressbook_api_key'],
+        Settings::get('laclasse_api_etab'),
+        Settings::get('laclasse_app_id'), Settings::get('laclasse_api_key'),
         array("profiles.user_id" => $login)));
 
     foreach ($user_structures as $structure) {

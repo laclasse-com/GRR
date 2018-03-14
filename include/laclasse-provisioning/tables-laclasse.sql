@@ -16,6 +16,13 @@ CREATE TABLE grr_j_user_site (login varchar(40) NOT NULL default '', id_site int
 -- Spécifique à l'instance de GRR                   --
 ------------------------------------------------------
 
+-- API provisionning
+INSERT INTO grr_setting VALUES ('laclasse_api_user', 'http://nelson.erasme.lan/api/users/') ON DUPLICATE KEY UPDATE VALUE = 'http://nelson.erasme.lan/api/users/';
+INSERT INTO grr_setting VALUES ('laclasse_api_etab', 'http://nelson.erasme.lan/api/structures/') ON DUPLICATE KEY UPDATE VALUE = 'http://nelson.erasme.lan/api/structures/';
+INSERT INTO grr_setting VALUES ('laclasse_api_profiles_types', 'http://nelson.erasme.lan/api/profiles_types/') ON DUPLICATE KEY UPDATE VALUE = 'http://nelson.erasme.lan/api/profiles_types/';
+INSERT INTO grr_setting VALUES ('laclasse_app_id', 'GRR') ON DUPLICATE KEY UPDATE VALUE = 'GRR';
+INSERT INTO grr_setting VALUES ('laclasse_api_key', 'GaAE6gbOJDywGSUsbI8Qs+FrC+omrBek') ON DUPLICATE KEY UPDATE VALUE = 'GaAE6gbOJDywGSUsbI8Qs+FrC+omrBek';
+
 -- Contenu & Apparence
 
 INSERT INTO grr_setting VALUES ('title_home_page', "Gestion et Réservation de Ressources") ON DUPLICATE KEY UPDATE VALUE = "Gestion et Réservation de Ressources";
@@ -25,7 +32,7 @@ INSERT INTO grr_setting VALUES ('webmaster_name', 'Webmestre de GRR') ON DUPLICA
 INSERT INTO grr_setting VALUES ('webmaster_email', 'admin@laclasse.local') ON DUPLICATE KEY UPDATE VALUE = 'admin@laclasse.local';
 INSERT INTO grr_setting VALUES ('technical_support_email', 'support.technique@laclasse.local') ON DUPLICATE KEY UPDATE VALUE = 'support.technique@laclasse.local';
 INSERT INTO grr_setting VALUES ('message_accueil', 'Bienvenue') ON DUPLICATE KEY UPDATE VALUE = 'Bienvenue';
-INSERT INTO grr_setting VALUES ('company', 'Laclasse.com GRR') ON DUPLICATE KEY UPDATE VALUE = 'Laclasse.com GRR';
+INSERT INTO grr_setting VALUES ('company', 'Gestion et Réservation de Ressources') ON DUPLICATE KEY UPDATE VALUE = 'Gestion et Réservation de Ressources';
 
 INSERT INTO grr_setting VALUES ('begin_bookings', '1504216800') ON DUPLICATE KEY UPDATE VALUE = '1504216800';
 INSERT INTO grr_setting VALUES ('end_bookings', '1535752800') ON DUPLICATE KEY UPDATE VALUE = '1535752800'; -- A voir la date de fin des réservations
@@ -62,7 +69,7 @@ INSERT INTO grr_setting VALUES ('Url_portail_sso', 'http://nelson.erasme.lan/por
 ------------------------------------------------------
 
 -- Contenu & Apparence
-INSERT INTO grr_setting VALUES ('mail_destinataire', '') ON DUPLICATE KEY UPDATE VALUE = '';
+INSERT INTO grr_setting VALUES ('mail_destinataire', 'destinataire@reservation.fr') ON DUPLICATE KEY UPDATE VALUE = '';
 INSERT INTO grr_setting VALUES ('mail_etat_destinataire', '0') ON DUPLICATE KEY UPDATE VALUE = '0';
 INSERT INTO grr_setting VALUES ('display_level_email', '2') ON DUPLICATE KEY UPDATE VALUE = '2';
 
@@ -108,5 +115,3 @@ INSERT INTO grr_setting VALUES ('sso_redirection_accueil_grr', 'n') ON DUPLICATE
 INSERT INTO grr_setting VALUES ('sso_ac_corr_profil_statut', 'n') ON DUPLICATE KEY UPDATE VALUE = 'n';
 INSERT INTO grr_setting VALUES ('cacher_lien_deconnecter', 'y') ON DUPLICATE KEY UPDATE VALUE = 'y';
 INSERT INTO grr_setting VALUES ('sso_IsNotAllowedModify', 'y') ON DUPLICATE KEY UPDATE VALUE = 'y';
-
-

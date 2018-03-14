@@ -36,6 +36,8 @@
 
 namespace Laclasse;
 
+use \Settings;
+
 require_once('laclasse_api.inc.php');
 require_once("provisioning/profiles_types.inc.php");
 require_once("provisioning/structures.inc.php");
@@ -43,9 +45,9 @@ require_once("grr/account.inc.php");
 
 // Get other useful data that the CAS Response doesn't send
 $user_data = json_decode(interroger_annuaire_ENT(
-    $cfg['laclasse_addressbook_api_user'] . $login,
-    $cfg['laclasse_addressbook_app_id'],
-    $cfg['laclasse_addressbook_api_key']));
+    Settings::get('laclasse_api_user') . $login,
+    Settings::get('laclasse_app_id'),
+    Settings::get('laclasse_api_key')));
 
 $user_default_site = get_user_default_site($user_data);    
 // Checks who is trying to login, no need to provide anything if he's forbidden
@@ -88,7 +90,7 @@ if (!isset($user_default_style))
 $cas_tab_login["user_default_style"] = $user_default_style;
 
 
-populateSites($cfg, $login);
+populateSites($login);
 // Create or update the account
 handle_laclasse_sso_login($login, $cas_tab_login);
 populate_user_admin_site($user_data);  

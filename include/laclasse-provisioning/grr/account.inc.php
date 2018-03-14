@@ -29,7 +29,9 @@ function create_account_if_not_exists($_login, $account_data) {
 		$libelle_fonction_user = $account_data["user_libelle_fonction"];
 		$language_user = $account_data["user_language"];
 		$default_style_user = $account_data["user_default_style"];
-        $statut_user = $account_data["user_statut"];
+		$statut_user = $account_data["user_statut"];
+		$default_site_user = $account_data['user_default_site'];
+
 		// On insère le nouvel utilisateur
 		$sql = "INSERT INTO ".TABLE_PREFIX."_utilisateurs SET
 		        nom='".protect_data_sql($nom_user)."',
@@ -38,29 +40,16 @@ function create_account_if_not_exists($_login, $account_data) {
 				password='',
 				statut='".$statut_user."',
 				email='".protect_data_sql($email_user)."',
-				etat='actif',";
+				etat='actif',
+				default_site='$default_site_user',";
 		if (isset($default_style_user) and ($default_style_user!=""))
 			$sql .= "default_style='".$default_style_user."',";
 		if (isset($language_user) and ($language_user!=""))
 			$sql .= "default_language='".$language_user."',";
 		$sql .= "source='ext'";
-		if (grr_sql_command($sql) < 0)
-		{
+		if (grr_sql_command($sql) < 0) {
             fatal_error(0, get_vocab("msg_login_created_error") . grr_sql_error());
-			return "2";
 		}
-		// on récupère les données de l'utilisateur
-		$sql = "SELECT upper(login) login, password, prenom, nom, statut, now() start, default_area, default_room, default_style, default_list_type, default_language, source, etat, default_site
-	    	from ".TABLE_PREFIX."_utilisateurs
-			where login = '" . protect_data_sql($_login) . "' and
-			source = 'ext' and
-			etat != 'inactif'";
-		$res_user = grr_sql_query($sql);
-		$num_row = grr_sql_count($res_user);
-		if ($num_row == 1)
-			$row = grr_sql_row($res_user,0);
-		else
-			return "2";
 }
 
 /**

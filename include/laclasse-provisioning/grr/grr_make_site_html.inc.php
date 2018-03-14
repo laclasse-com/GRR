@@ -2,6 +2,8 @@
 
 namespace Laclasse;
 
+use \Settings;
+
 require_once(__DIR__ . '/../laclasse_api.inc.php');
 
 /**
@@ -18,7 +20,6 @@ require_once(__DIR__ . '/../laclasse_api.inc.php');
 function make_site_select_html($link, $current_site, $year, $month, $day, $user)
 {
 	global $vocab;
-	global $cfg;
 	$nb_sites_a_afficher = 0;
 
 	$out_html .= '<b><i>'.get_vocab('sites').get_vocab('deux_points').'</i></b><form id="site_001" action="'.$_SERVER['PHP_SELF'].'"><div>';
@@ -30,9 +31,9 @@ function make_site_select_html($link, $current_site, $year, $month, $day, $user)
 			ORDER BY id ASC";
 
 	$user_data = json_decode(interroger_annuaire_ENT(
-        $cfg['laclasse_addressbook_api_user'] . $user,
-        $cfg['laclasse_addressbook_app_id'],
-		$cfg['laclasse_addressbook_api_key']));
+        Settings::get('laclasse_api_user') . $user,
+        Settings::get('laclasse_app_id'),
+		Settings::get('laclasse_api_key')));
 
 	$res = grr_sql_query($sql);
 	if ($res)
@@ -83,12 +84,11 @@ function make_site_select_html($link, $current_site, $year, $month, $day, $user)
 function make_site_list_html($link, $current_site, $year, $month, $day,$user)
 {
 	global $vocab;
-	global $cfg;
 	
 	$user_data = json_decode(interroger_annuaire_ENT(
-        $cfg['laclasse_addressbook_api_user'] . $user,
-        $cfg['laclasse_addressbook_app_id'],
-		$cfg['laclasse_addressbook_api_key']));
+        Settings::get('laclasse_api_user') . $user,
+        Settings::get('laclasse_app_id'),
+		Settings::get('laclasse_api_key')));
 
 	$out_html .= '
 		<b><i><span class="bground">'.get_vocab('sites').get_vocab('deux_points').'</span></i></b>
@@ -129,18 +129,17 @@ function make_site_list_html($link, $current_site, $year, $month, $day,$user)
 function make_site_item_html($link, $current_site, $year, $month, $day, $user)
 {
     global $vocab;
-    global $cfg;
     $nb_sites_a_afficher = 0;
-	$out_html .= '<ul class="list-group"><li class="list-group-item">'.get_vocab('sites').get_vocab('deux_points').'</li></ul><form class="ressource" id="site_001" action="'.$_SERVER['PHP_SELF'].'"><div>';
+	$out_html = '<ul class="list-group"><li class="list-group-item">'.get_vocab('sites').get_vocab('deux_points').'</li></ul><form class="ressource" id="site_001" action="'.$_SERVER['PHP_SELF'].'"><div>';
 	
 	$sql = "SELECT id, sitename ,sitecode
 			FROM ".TABLE_PREFIX."_site
 			ORDER BY id ASC";
 
 	$user_data = json_decode(interroger_annuaire_ENT(
-        $cfg['laclasse_addressbook_api_user'] . $user,
-        $cfg['laclasse_addressbook_app_id'],
-		$cfg['laclasse_addressbook_api_key']));
+        Settings::get('laclasse_api_user') . $user,
+        Settings::get('laclasse_app_id'),
+		Settings::get('laclasse_api_key')));
 
 	$res = grr_sql_query($sql);
 	if ($res)
