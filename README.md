@@ -12,6 +12,11 @@ GRR est un outil de gestion et de réservation de ressources. **GRR** est une ad
 
 ----------
 
+Spécificités de ce fork
+-------------
+
+Gère un mode multisite "restraint", plus de détails ici : [README.md](https://github.com/laclasse-com/GRR/blob/laclasse-GRR-3.3.1/include/laclasse-provisioning/README.md)
+
 Installation
 -------------
 
