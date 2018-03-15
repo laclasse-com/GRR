@@ -44,7 +44,6 @@ Temporary Items
 
 include/connect.inc.php
 include/CAS
-include/config_CAS.inc.php
 include/config_ldap.inc.php
 include/cas.inc.php
 include/config.inc.php
