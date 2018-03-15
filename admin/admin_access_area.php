@@ -194,10 +194,26 @@ if ($id_area != -1)
 			<div><select size="1" name="reg_user_login">
 				<option value=''><?php echo get_vocab("nobody"); ?></option>
 				<?php
-				// Pour mysql >= 4.1
-				$sql = "SELECT login, nom, prenom FROM ".TABLE_PREFIX."_utilisateurs WHERE (etat!='inactif' and (statut='utilisateur' or statut='visiteur' or statut='gestionnaire_utilisateur')) AND login NOT IN (SELECT login FROM ".TABLE_PREFIX."_j_user_area WHERE id_area = '$id_area') order by nom, prenom";
-				// Pour mysql < 4.1
-				$sql = "SELECT DISTINCT u.login, u.nom, u.prenom FROM ".TABLE_PREFIX."_utilisateurs u left join ".TABLE_PREFIX."_j_user_area on ".TABLE_PREFIX."_j_user_area.login=u.login WHERE ((etat!='inactif' and (statut='utilisateur' or statut='visiteur' or statut='gestionnaire_utilisateur')) AND (".TABLE_PREFIX."_j_user_area.login is null or (".TABLE_PREFIX."_j_user_area.login=u.login and ".TABLE_PREFIX."_j_user_area.id_area!=".$id_area.")))  order by u.nom, u.prenom";
+				// Limitation des utilisateurs affiché
+				if( authGetUserLevel(getUserName(), -1) == 6 ) {
+					$sql = "SELECT DISTINCT u.login, u.nom, u.prenom FROM ".TABLE_PREFIX."_utilisateurs u left join ".TABLE_PREFIX."_j_user_area on ".TABLE_PREFIX."_j_user_area.login=u.login WHERE ((etat!='inactif' and (statut='utilisateur' or statut='visiteur' or statut='gestionnaire_utilisateur')) AND (".TABLE_PREFIX."_j_user_area.login is null or (".TABLE_PREFIX."_j_user_area.login=u.login and ".TABLE_PREFIX."_j_user_area.id_area!=".$id_area.")))  order by u.nom, u.prenom";
+				} else {
+					$sql = "SELECT DISTINCT u.login, u.nom, u.prenom
+				 			FROM ".TABLE_PREFIX."_utilisateurs u 
+							LEFT JOIN ".TABLE_PREFIX."_j_user_area user_area ON user_area.login = u.login
+						 	JOIN ".TABLE_PREFIX."_j_site_area site_area ON site_area.id_area = '$id_area'
+						 	RIGHT JOIN ".TABLE_PREFIX."_j_user_site user_site ON 
+								(user_site.id_site = site_area.id_site AND user_site.login = u.login)
+				 			WHERE
+					 			((etat != 'inactif'
+									AND (statut = 'utilisateur'
+									OR statut = 'visiteur'
+									OR statut = 'gestionnaire_utilisateur'))
+					 			AND (user_area.login IS NULL
+									OR (user_area.login = u.login
+									AND user_area.id_area != '$id_area')))
+				 			ORDER BY u.nom , u.prenom";
+				}
 				$res = grr_sql_query($sql);
 				if ($res)
 					for ($i = 0; ($row = grr_sql_row($res, $i)); $i++)
@@ -210,10 +226,26 @@ if ($id_area != -1)
 		</td></tr>
 		<!-- selection pour ajout de masse !-->
 		<?php
-		// Pour mysql >= 4.1
-		$sql = "SELECT login, nom, prenom FROM ".TABLE_PREFIX."_utilisateurs WHERE (etat!='inactif' and (statut='utilisateur' or statut='visiteur' or statut='gestionnaire_utilisateur')) AND login NOT IN (SELECT login FROM ".TABLE_PREFIX."_j_user_area WHERE id_area = '$id_area') order by nom, prenom";
-		// Pour mysql < 4.1
-		$sql = "SELECT DISTINCT u.login, u.nom, u.prenom FROM ".TABLE_PREFIX."_utilisateurs u left join ".TABLE_PREFIX."_j_user_area on ".TABLE_PREFIX."_j_user_area.login=u.login WHERE ((etat!='inactif' and (statut='utilisateur' or statut='visiteur' or statut='gestionnaire_utilisateur')) AND (".TABLE_PREFIX."_j_user_area.login is null or (".TABLE_PREFIX."_j_user_area.login=u.login and ".TABLE_PREFIX."_j_user_area.id_area!=".$id_area.")))  order by u.nom, u.prenom";
+		// Limitation des utilisateurs affiché
+		if( authGetUserLevel(getUserName(), -1) == 6 ) {
+			$sql = "SELECT DISTINCT u.login, u.nom, u.prenom FROM ".TABLE_PREFIX."_utilisateurs u left join ".TABLE_PREFIX."_j_user_area on ".TABLE_PREFIX."_j_user_area.login=u.login WHERE ((etat!='inactif' and (statut='utilisateur' or statut='visiteur' or statut='gestionnaire_utilisateur')) AND (".TABLE_PREFIX."_j_user_area.login is null or (".TABLE_PREFIX."_j_user_area.login=u.login and ".TABLE_PREFIX."_j_user_area.id_area!=".$id_area.")))  order by u.nom, u.prenom";
+		} else {
+			$sql = "SELECT DISTINCT u.login, u.nom, u.prenom
+					 FROM ".TABLE_PREFIX."_utilisateurs u 
+					LEFT JOIN ".TABLE_PREFIX."_j_user_area user_area ON user_area.login = u.login
+					 JOIN ".TABLE_PREFIX."_j_site_area site_area ON site_area.id_area = '$id_area'
+					 RIGHT JOIN ".TABLE_PREFIX."_j_user_site user_site ON 
+						(user_site.id_site = site_area.id_site AND user_site.login = u.login)
+					 WHERE
+						 ((etat != 'inactif'
+							AND (statut = 'utilisateur'
+							OR statut = 'visiteur'
+							OR statut = 'gestionnaire_utilisateur'))
+						 AND (user_area.login IS NULL
+							OR (user_area.login = u.login
+							AND user_area.id_area != '$id_area')))
+					 ORDER BY u.nom , u.prenom";
+		}
 		$res = grr_sql_query($sql);
 		$nb_users = grr_sql_count($res);
 		if ($nb_users > 0)

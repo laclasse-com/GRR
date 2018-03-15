@@ -122,7 +122,8 @@ if (isset($_POST['login']) && isset($_POST['password']))
 // Dans le cas d'une démo, on met à jour la base une fois par jour.
 MajMysqlModeDemo();
 //si on a interdit l'acces a la page login
-if ((Settings::get("Url_cacher_page_login") != "") && ((!isset($sso_super_admin)) || ($sso_super_admin == false)) && (!isset($_GET["local"])))
+// interdiction d'utiliser la page d'authentification locale
+if ((Settings::get("Url_cacher_page_login") != "") && ((!isset($sso_super_admin)) || ($sso_super_admin == false)) /*&& (!isset($_GET["local"]))*/)
 	header("Location: ./index.php");
 echo begin_page(get_vocab("mrbs").get_vocab("deux_points").Settings::get("company"),"no_session");
 ?>

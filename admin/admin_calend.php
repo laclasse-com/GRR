@@ -40,10 +40,10 @@ echo "<h3> Choisissez le type d'action à réaliser : </h3>\n";
 
 echo "\n<table>";
 echo "\n<tr><td><a href='admin_calend2.php'>".get_vocab('admin_calendar_title.php')."</a></td></tr>";
-echo "\n<tr><td><a href='admin_delete_entry_after.php'>Supprimer toutes les réservations après une date donnée</a></td></tr>";
-echo "\n<tr><td><a href='admin_delete_entry_before.php'>Supprimer toutes les réservations avant une date donnée</a></td></tr>";
-echo "\n<tr><td><a href='admin_import_entries_csv_udt.php'>Importer un fichier d'occupation de salles au format CSV provenant de UnDeuxTemps</a></td></tr>";
-echo "\n<tr><td><a href='admin_import_entries_csv_direct.php'>Importer un fichier d'occupation de salles au format CSV</a></td></tr>";
+// echo "\n<tr><td><a href='admin_delete_entry_after.php'>Supprimer toutes les réservations après une date donnée</a></td></tr>";
+// echo "\n<tr><td><a href='admin_delete_entry_before.php'>Supprimer toutes les réservations avant une date donnée</a></td></tr>";
+// echo "\n<tr><td><a href='admin_import_entries_csv_udt.php'>Importer un fichier d'occupation de salles au format CSV provenant de UnDeuxTemps</a></td></tr>";
+// echo "\n<tr><td><a href='admin_import_entries_csv_direct.php'>Importer un fichier d'occupation de salles au format CSV</a></td></tr>";
 echo "\n</table>";
 
 ?>

@@ -695,7 +695,16 @@ if (((authGetUserLevel(getUserName(), -1, "room") >= $qui_peut_reserver_pour) ||
 	echo '<div class="col-xs-6">'.PHP_EOL;
 	echo '<select size="1" class="form-control" name="beneficiaire" id="beneficiaire" onchange="setdefault(\'beneficiaire_default\',\'\');check_4();insertProfilBeneficiaire();">'.PHP_EOL;
 	echo '<option value="" >'.get_vocab("personne exterieure").'</option>'.PHP_EOL;
-	$sql = "SELECT DISTINCT login, nom, prenom FROM ".TABLE_PREFIX."_utilisateurs WHERE (etat!='inactif' and statut!='visiteur' ) OR (login='".$beneficiaire."') ORDER BY nom, prenom";
+	if( authGetUserLevel(getUserName(), -1) == 6 ) {
+		$sql = "SELECT DISTINCT login, nom, prenom 
+			FROM ".TABLE_PREFIX."_utilisateurs 
+			WHERE (etat!='inactif' and statut!='visiteur' ) OR (login='".getUserName()."') 
+			ORDER BY nom, prenom";
+	} else {
+		$sql = "SELECT users.login, nom, prenom FROM ".TABLE_PREFIX."_utilisateurs users 
+		LEFT JOIN ".TABLE_PREFIX."_j_user_site userssite ON users.login = userssite.login
+		WHERE id_site IN (SELECT id_site FROM ".TABLE_PREFIX."_j_user_site WHERE login = '".getUserName()."')";
+	}
 	$res = grr_sql_query($sql);
 	if ($res)
 	{
@@ -994,10 +1003,28 @@ if ($nb_areas == 1)
 	echo "style=\"display:none\" ";
 echo "><td class=\"CL\" style=\"vertical-align:top;\" >\n";
 echo "<div class=\"col-xs-3\"><select class=\"form-control\" id=\"areas\" name=\"areas\" onchange=\"changeRooms(this.form);insertChampsAdd();insertTypes()\" >";
-if ($enable_periods == 'y')
-	$sql = "SELECT id, area_name FROM ".TABLE_PREFIX."_area WHERE id='".$area."' ORDER BY area_name";
-else
-	$sql = "SELECT id, area_name FROM ".TABLE_PREFIX."_area WHERE enable_periods != 'y' ORDER BY area_name";
+
+if ($enable_periods == 'y') {
+	if(authGetUserLevel(getUserName(), -1) < 6) {
+		$sql = "SELECT id, area_name FROM ".TABLE_PREFIX."_area area 
+				JOIN ".TABLE_PREFIX."_j_site_area site_area ON site_area.id_area = area.id
+				JOIN ".TABLE_PREFIX."_j_user_site user_site ON user_site.id_site = site_area.id_site
+				WHERE id='".$area."' AND login = '".getUserName()."'  
+				ORDER BY area_name";
+	} else {
+		$sql = "SELECT id, area_name FROM ".TABLE_PREFIX."_area WHERE id='".$area."' ORDER BY area_name";
+	}
+} else {
+	if(authGetUserLevel(getUserName(), -1) < 6) {
+		$sql = "SELECT id, area_name FROM ".TABLE_PREFIX."_area area 
+			JOIN ".TABLE_PREFIX."_j_site_area site_area ON site_area.id_area = area.id
+			JOIN ".TABLE_PREFIX."_j_user_site user_site ON user_site.id_site = site_area.id_site
+			WHERE login = '".getUserName()."' AND enable_periods != 'y'
+			ORDER BY area_name";
+	} else {
+		$sql = "SELECT id, area_name FROM ".TABLE_PREFIX."_area WHERE enable_periods != 'y' ORDER BY area_name";
+	}
+}
 $res = grr_sql_query($sql);
 if ($res)
 {
@@ -1013,7 +1040,6 @@ if ($res)
 	}
 }
 echo '</select>',PHP_EOL,'</div>',PHP_EOL,'</td>',PHP_EOL,'</tr>',PHP_EOL;
-
 echo '<!-- ************* Ressources edition ***************** -->',PHP_EOL;
 echo "<tr><td class=\"E\"><b>".get_vocab("rooms").get_vocab("deux_points")."</b></td></tr>\n";
 $sql = "SELECT id, room_name, description FROM ".TABLE_PREFIX."_room WHERE area_id=$area_id ";

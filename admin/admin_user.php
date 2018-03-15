@@ -244,10 +244,10 @@ if (empty($order_by))
 	$order_by = 'nom,prenom';
 }
 ?>
-| <a href="admin_user_modify.php?display=<?php echo $display; ?>"><?php echo get_vocab("display_add_user"); ?></a> |
+<!-- | <a href="admin_user_modify.php?display=<?php echo $display; ?>"><?php echo get_vocab("display_add_user"); ?></a> |
 <a href="admin_import_users_csv.php"><?php echo get_vocab("display_add_user_list_csv"); ?></a> |
  <a href="admin_import_users_elycee.php">Importer des utilisateurs depuis elycée</a> |
- <a href="admin_user_mdp_facile.php"><?php echo get_vocab("admin_user_mdp_facile"); ?></a> |
+ <a href="admin_user_mdp_facile.php"><?php echo get_vocab("admin_user_mdp_facile"); ?></a> | -->
 <?php
 // On propose de supprimer les utilisateurs ext de GRR qui ne sont plus présents dans la base LCS
 if (Settings::get("sso_statut") == "lcs")
@@ -360,7 +360,14 @@ echo "<td><b><a href='admin_user.php?order_by=statut,nom,prenom&amp;display=$dis
 echo "<td><b><a href='admin_user.php?order_by=source,nom,prenom&amp;display=$display'>".get_vocab("authentification")."</a></b></td>";
 echo "<td><b>".get_vocab("delete")."</b></td>";
 echo "</tr>";
-$sql = "SELECT nom, prenom, statut, login, etat, source FROM ".TABLE_PREFIX."_utilisateurs ORDER BY $order_by";
+// Limitation des utilisateurs affichés si utilisateur n'est pas administrateur
+if( authGetUserLevel(getUserName(), -1) == 6 ) {
+	$sql = "SELECT nom, prenom, statut, login, etat, source FROM ".TABLE_PREFIX."_utilisateurs ORDER BY $order_by";
+} else {
+	$sql = "SELECT nom, prenom, statut, users.login, etat, source 
+			FROM ".TABLE_PREFIX."_utilisateurs users LEFT JOIN ".TABLE_PREFIX."_j_user_site userssite ON users.login = userssite.login
+			WHERE id_site IN (SELECT id_site FROM ".TABLE_PREFIX."_j_user_site WHERE login = '". $_SESSION['login'] ."')";
+}
 $res = grr_sql_query($sql);
 if ($res)
 {

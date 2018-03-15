@@ -70,7 +70,7 @@ $nb_year_calendar = 10;
 # Mais si un navigateur est amené à se connecter au cours de la même session, à deux sites GRR différents,
 # ces deux sites GRR doivent avoir des noms de session différents.
 # Dans ce cas, il vous faudra changer la valeur GRR ci-dessous par une autre valeur.
- define('SESSION_NAME', "GRR");
+ define('SESSION_NAME', "GRR-laclasse");
 
 # Nombre maximum (+1) de réservations autorisés lors d'une réservation avec périodicité
  $max_rep_entrys = 365 + 1;
@@ -104,7 +104,7 @@ $restaureBBD = 1;
 $debug_flag = 0;
 
 #Rechercher des MAJ sur le serveur grr.devome.com || 0: non ; 1: oui - Defaut 1
-$recherche_MAJ = 1;
+$recherche_MAJ = 0;
 
 ##################################################
 # Cas d'une authentification via config.inc.php  #

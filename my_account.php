@@ -405,10 +405,17 @@ echo ('
 		if (Settings::get("module_multisite") == "Oui")
 		{
 			echo '<h4>'.get_vocab('explain_default_area_and_room_and_site').'</h4>';
-
-			$sql = "SELECT id,sitecode,sitename
-			FROM ".TABLE_PREFIX."_site
-			ORDER BY id ASC";
+			if($user_statut == 'administrateur') {
+				$sql = "SELECT id,sitecode,sitename
+				FROM ".TABLE_PREFIX."_site 
+				ORDER BY id ASC";
+			} else {
+				$sql = "SELECT id,sitecode,sitename
+						FROM ".TABLE_PREFIX."_site site
+						JOIN ".TABLE_PREFIX."_j_user_site user_site
+						ON user_site.id_site = site.id
+						WHERE login='".getUserName()."'";
+			}
 			$resultat = grr_sql_query($sql);
 			echo '
 			<table>

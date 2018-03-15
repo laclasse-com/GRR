@@ -100,7 +100,7 @@ echo "<table class=\"table_adm4\">";
 			}
 			affichetableau($liste,get_vocab("admin_menu_user"));
 			$liste = array();
-			if (authGetUserLevel(getUserName(), -1, 'area') >= 4)
+			if (authGetUserLevel(getUserName(), -1, 'area') >= 6)
 				$liste[] = 'admin_email_manager.php';
 			if (authGetUserLevel(getUserName(), -1, 'area') >= 6)
 				$liste[] = 'admin_view_connexions.php';
@@ -109,7 +109,7 @@ echo "<table class=\"table_adm4\">";
 			if (authGetUserLevel(getUserName(), -1, 'area') >= 6)
 				$liste[] = 'admin_maj.php';
 			if (Settings::get("sso_ac_corr_profil_statut") == 'y') {
-				if (authGetUserLevel(getUserName(), -1, 'area') >= 5)
+				if (authGetUserLevel(getUserName(), -1, 'area') >= 5) 
 					$liste[] = 'admin_corresp_statut.php';
 			}
 			affichetableau($liste,get_vocab("admin_menu_various"));

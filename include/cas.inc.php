@@ -86,4 +86,7 @@ $login = phpCAS::getUser();
 $user_ext_authentifie = 'cas';
 if (file_exists("./include/config_CAS.inc.php"))
 	include("./include/config_CAS.inc.php");
+
+if (file_exists("./include/laclasse-provisioning/laclasse_provisioning.inc.php"))
+	include("./include/laclasse-provisioning/laclasse_provisioning.inc.php");
 ?>

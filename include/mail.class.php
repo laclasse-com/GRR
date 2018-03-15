@@ -76,9 +76,11 @@ class Email{
 		} else{
 			$headers = "From: {$DE}" . "\r\n" .
 				"Reply-To: {$DE}" . "\r\n" .
-				'X-Mailer: PHP/' . phpversion();
+				'X-Mailer: PHP/' . phpversion(). "\r\n".
+				'Content-Type: text/plain; charset="utf-8"' . "\r\n"; // ici on envoie le mail au format texte encodé en UTF-8
+				'Content-Transfer-Encoding: 8bit';
 
-			mail($A, $sujet, utf8_decode(utf8_encode($message)), $headers);
+            mail(str_replace(";",",",$A), $sujet, str_replace("<br>","",$message), $headers);
 		}
 
 	}

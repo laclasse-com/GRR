@@ -388,8 +388,16 @@ else if ($etape == 2)
 	{
 		echo "<tr><td class=\"CR\"><b>".ucfirst(trim(get_vocab("reservation au nom de"))).get_vocab("deux_points")."</b></td>\n\n";
 		echo "<td class=\"CL\"><select size=\"1\" name=\"beneficiaire\" class=\"form-control\">\n";
-		$sql = "SELECT DISTINCT login, nom, prenom FROM ".TABLE_PREFIX."_utilisateurs WHERE  (etat!='inactif' and statut!='visiteur' ) order by nom, prenom";
-		$res = grr_sql_query($sql);
+		// Limitation utilisateurs
+		if( authGetUserLevel(getUserName(), -1) == 6 ) {
+			$sql = "SELECT DISTINCT login, nom, prenom FROM ".TABLE_PREFIX."_utilisateurs WHERE  (etat!='inactif' and statut!='visiteur' and statut!='administrateur') order by nom, prenom";
+		} else {
+			$sql = "SELECT users.login, nom, prenom 
+			FROM ".TABLE_PREFIX."_utilisateurs users LEFT JOIN ".TABLE_PREFIX."_j_user_site userssite ON users.login = userssite.login
+			WHERE id_site IN (SELECT id_site FROM ".TABLE_PREFIX."_j_user_site WHERE login = '". getUsername() ."')";
+
+		}
+				$res = grr_sql_query($sql);
 		if ($res)
 		{
 			for ($i = 0; ($row = grr_sql_row($res, $i)); $i++)
@@ -433,7 +441,7 @@ else if ($etape == 2)
 		echo "<tr><td class=\"CR\"><b>".get_vocab("type").get_vocab("deux_points")."</b></td>\n";
 		echo "<td class=\"CL\"><select name=\"type_\" class=\"form-control\">\n";
 		echo "<option value='0'>".get_vocab("choose")."</option>\n";
-		$sql = "SELECT DISTINCT t.type_name, t.type_letter FROM ".TABLE_PREFIX."_type_area t
+		$sql = "SELECT DISTINCT t.type_name, t.type_letter,order_display FROM ".TABLE_PREFIX."_type_area t
 		LEFT JOIN ".TABLE_PREFIX."_j_type_area j on j.id_type=t.id
 		WHERE (j.id_area  IS NULL or (";
 			$ind = 0;
@@ -474,10 +482,10 @@ else if (!$etape)
 	echo "<table border=\"1\"><tr><td>\n";
 	echo "<p><b>".get_vocab("choix_domaines")."</b></p>";
 	echo "<select name=\"areas[]\" multiple=\"multiple\" class=\"form-control\">\n";
-	if (authGetUserLevel(getUserName(), -1) >= 2)
+	if (authGetUserLevel(getUserName(), -1) >= 5)
 		$sql = "SELECT id, area_name FROM ".TABLE_PREFIX."_area
 	ORDER BY order_display, area_name";
-	else
+	else 
 		$sql = "SELECT a.id, a.area_name FROM ".TABLE_PREFIX."_area a, ".TABLE_PREFIX."_j_site_area j, ".TABLE_PREFIX."_site s, ".TABLE_PREFIX."_j_useradmin_site u
 	WHERE a.id=j.id_area and j.id_site = s.id and s.id=u.id_site and u.login='".getUserName()."'
 	ORDER BY a.order_display, a.area_name";

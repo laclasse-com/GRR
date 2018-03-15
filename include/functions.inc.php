@@ -3172,7 +3172,17 @@ function UserRoomMaxBooking($user, $id_room, $number)
  	$sql = "SELECT statut FROM ".TABLE_PREFIX."_utilisateurs WHERE login = '".protect_data_sql($user)."'";
  	$statut_user = grr_sql_query1($sql);
  	if ($statut_user == 'administrateur')
- 		return true;
+		return true;
+	// On teste si l'utilisateur est administrateur de site
+	$sql = "SELECT COUNT(*) FROM grr_j_useradmin_site useradmin_site 
+			JOIN grr_j_site_area site_area ON site_area.id_site=useradmin_site.id_site
+			JOIN grr_room room ON room.area_id=site_area.id_area
+			WHERE login = '".protect_data_sql($user)."' AND room.id='".$id_room."'";
+	$is_site_admin = grr_sql_query1($sql);
+	if ($is_site_admin == 1 ) {
+		return true;
+	}
+
 	// A-t-on le droit d'agir dans le passé ?
  	$allow_action_in_past = grr_sql_query1("SELECT allow_action_in_past FROM ".TABLE_PREFIX."_room WHERE id = '".protect_data_sql($id_room)."'");
  	if ($allow_action_in_past == 'y')

@@ -25,15 +25,22 @@ if ((authGetUserLevel(getUserName(), -1) < 6) && (authGetUserLevel(getUserName()
 	showAccessDenied($back);
 	exit();
 }
-// un gestionnaire d'utilisateurs ne peut pas modifier un administrateur général ou un gestionnaire d'utilisateurs
+// un gestionnaire d'utilisateurs ne peut pas modifier un administrateur général
 if (isset($_GET["user_login"]) && (authGetUserLevel(getUserName(),-1,'user') ==  1))
 {
 	$test_statut = grr_sql_query1("SELECT statut FROM ".TABLE_PREFIX."_utilisateurs WHERE login='".$_GET["user_login"]."'");
-	if (($test_statut == "administrateur") or ($test_statut == "gestionnaire_utilisateur"))
+	if (($test_statut == "administrateur") /*or ($test_statut == "gestionnaire_utilisateur")*/)
 	{
 		showAccessDenied($back);
 		exit();
 	}
+}
+// un utilisateur non administrateur ne peut pas modifié le nom, le prénom, l'email, l'authentification
+// les 3 1ers car ils sont mis à jour à chaque connexion
+// l'authentification afin de bloquer la création de compte locaux
+if(authGetUserLevel(getUserName(),-1) < 6)  {
+	$disabled = ' disabled=\"disabled\" ';
+	$readonly = ' readonly=\"readonly\" ';
 }
 #If we dont know the right date then make it up
 unset($user_login);
@@ -61,7 +68,7 @@ if ($valid == "yes")
 	$reg_email = isset($_GET["reg_email"]) ? $_GET["reg_email"] : NULL;
 	$reg_etat = isset($_GET["reg_etat"]) ? $_GET["reg_etat"] : NULL;
 	$reg_source = isset($_GET["reg_source"]) ? $_GET["reg_source"] : NULL;
-	$reg_type_authentification = isset($_GET["type_authentification"]) ? $_GET["type_authentification"] : "locale";
+	$reg_type_authentification = isset($_GET["type_authentification"]) ? $_GET["type_authentification"] : "externe"; // Changed cause only SSO is available
 	if ($reg_type_authentification != "locale")
 		$reg_password = "";
 	if (($reg_nom == '') || ($reg_prenom == ''))
@@ -77,11 +84,11 @@ if ($valid == "yes")
 		$test_login = preg_replace("/([A-Za-z0-9_@. -])/","",$new_login);
 		if ((isset($new_login)) && ($new_login != '') && ($test_login == ""))
 		{
-			// un gestionnaire d'utilisateurs ne peut pas créer un administrateur général ou un gestionnaire d'utilisateurs
+			// un gestionnaire d'utilisateurs ne peut pas créer un administrateur général 
 			$test_statut = TRUE;
 			if (authGetUserLevel(getUserName(),-1) < 6)
 			{
-				if (($reg_statut == "administrateur") || ($reg_statut == "gestionnaire_utilisateur"))
+				if (($reg_statut == "administrateur") /*|| ($reg_statut == "gestionnaire_utilisateur")*/)
 					$test_statut = FALSE;
 			}
 			$new_login = strtoupper($new_login);
@@ -154,13 +161,13 @@ if ($valid == "yes")
 		}
 		else if ((isset($user_login)) && ($user_login != ''))
 		{
-			// un gestionnaire d'utilisateurs ne peut pas modifier un administrateur général ou un gestionnaire d'utilisateurs
+			// un gestionnaire d'utilisateurs ne peut pas modifier un administrateur général 
 			$test_statut = TRUE;
 			if (authGetUserLevel(getUserName(),-1) < 6)
 			{
 				$old_statut = grr_sql_query1("SELECT statut FROM ".TABLE_PREFIX."_utilisateurs WHERE login='".protect_data_sql($user_login)."'");
-				if (((($old_statut == "administrateur") || ($old_statut == "gestionnaire_utilisateur")) && ($old_statut != $reg_statut))
-					|| ((($old_statut == "utilisateur") || ($old_statut == "visiteur")) && (($reg_statut == "administrateur") || ($reg_statut == "gestionnaire_utilisateur"))))
+				if (((($old_statut == "administrateur") /*|| ($old_statut == "gestionnaire_utilisateur")*/) && ($old_statut != $reg_statut))
+					|| ((($old_statut == "utilisateur") || ($old_statut == "visiteur")) && (($reg_statut == "administrateur") /*|| ($reg_statut == "gestionnaire_utilisateur")*/)))
 					$test_statut = FALSE;
 			}
 			if (!($test_statut))
@@ -359,7 +366,7 @@ else
 	if ((Settings::get("sso_statut") != "") || (Settings::get("ldap_statut") != '') || (Settings::get("imap_statut") != ''))
 	{
 		echo get_vocab("authentification").get_vocab("deux_points");
-		echo "<select id=\"select_auth_mode\" name='type_authentification' onchange=\"display_password_fields(this.id);\">\n";
+		echo "<select id=\"select_auth_mode\" name='type_authentification' onchange=\"display_password_fields(this.id);\" $disabled>\n";
 		echo "<option value='locale'";
 		if ($user_source == 'local')
 			echo "selected=\"selected\" ";
@@ -384,17 +391,17 @@ else
 	echo "<td>".get_vocab("last_name")." *".get_vocab("deux_points")."</td>\n<td><input type=\"text\" name=\"reg_nom\" size=\"40\" value=\"";
 	if ($user_nom)
 		echo htmlspecialchars($user_nom);
-	echo "\" /></td>\n";
+	echo "\" $readonly /></td>\n";
 	echo "<td>".get_vocab("first_name")." *".get_vocab("deux_points")."</td>\n<td><input type=\"text\" name=\"reg_prenom\" size=\"20\" value=\"";
 	if ($user_nom)
 		echo htmlspecialchars($user_prenom);
-	echo "\" /></td>\n";
+	echo "\" $readonly /></td>\n";
 	echo "<td></td><td></td>";
 	echo "</tr>\n";
 	echo "<tr><td>".get_vocab("mail_user").get_vocab("deux_points")."</td><td><input type=\"text\" name=\"reg_email\" size=\"30\" value=\"";
 	if ($user_mail)
 		echo htmlspecialchars($user_mail);
-	echo "\" /></td>\n";
+	echo "\" $readonly /></td>\n";
 	echo "<td>".get_vocab("statut").get_vocab("deux_points")."</td>\n";
 	echo "<td><select name=\"reg_statut\" size=\"1\">\n";
 	echo "<option value=\"visiteur\" ";
@@ -409,15 +416,16 @@ else
 		echo "selected=\"selected\"";
 	}
 	echo ">".get_vocab("statut_user")."</option>\n";
-// un gestionnaire d'utilisateurs ne peut pas créer un administrateur général ou un gestionnaire d'utilisateurs
+
+	echo "<option value=\"gestionnaire_utilisateur\" ";
+	if ($user_statut == "gestionnaire_utilisateur")
+	{
+		echo "selected=\"selected\"";
+	}
+	echo ">".get_vocab("statut_user_administrator")."</option>\n";
+	// un gestionnaire d'utilisateurs ne peut pas créer un administrateur général
 	if (authGetUserLevel(getUserName(),-1) >= 6)
 	{
-		echo "<option value=\"gestionnaire_utilisateur\" ";
-		if ($user_statut == "gestionnaire_utilisateur")
-		{
-			echo "selected=\"selected\"";
-		}
-		echo ">".get_vocab("statut_user_administrator")."</option>\n";
 		echo "<option value=\"administrateur\" ";
 		if ($user_statut == "administrateur")
 		{

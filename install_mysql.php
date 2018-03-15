@@ -159,6 +159,28 @@ if ($etape == 4)
 			}
 		}
 		fclose($fd);
+		// Called to configure the database so it fits laclasse.com particularities
+		if($laclasse_fd = fopen("include/laclasse-provisioning/tables-laclasse.sql","r")) {
+			while (!feof($laclasse_fd)) {
+				$query = fgets($laclasse_fd, 5000);
+				$query = trim($query);
+				$query = preg_replace("/DROP TABLE IF EXISTS grr/","DROP TABLE IF EXISTS ".$table_prefix,$query);
+				$query = preg_replace("/CREATE TABLE grr/","CREATE TABLE ".$table_prefix,$query);
+				$query = preg_replace("/TRUNCATE TABLE grr/","TRUNCATE TABLE ".$table_prefix,$query);
+				$query = preg_replace("/INSERT INTO grr/","INSERT INTO ".$table_prefix,$query);
+
+				if ($query != '' && !preg_match("/^--.*/",$query)) {
+					// We convert it to latin1 since the database uses latin1_swedish and we want to use utf8
+					$query = utf8_decode($query); 
+					$reg = mysqli_query($db, $query);
+					if (!$reg) {
+						echo "<br /><font color=\"red\">ERROR</font> : '$query'";
+						$result_ok = 'no';
+					}
+				}
+			}
+			fclose($laclasse_fd);
+		}
 		if ($result_ok == 'yes')
 		{
 			$ok = 'yes';
