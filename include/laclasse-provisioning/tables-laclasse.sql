@@ -72,6 +72,7 @@ INSERT INTO grr_setting VALUES ('Url_portail_sso', 'http://nelson.erasme.lan/por
 INSERT INTO grr_setting VALUES ('mail_destinataire', 'destinataire@reservation.fr') ON DUPLICATE KEY UPDATE VALUE = '';
 INSERT INTO grr_setting VALUES ('mail_etat_destinataire', '0') ON DUPLICATE KEY UPDATE VALUE = '0';
 INSERT INTO grr_setting VALUES ('display_level_email', '2') ON DUPLICATE KEY UPDATE VALUE = '2';
+INSERT INTO grr_setting VALUES ('remplissage_description_breve', '0') ON DUPLICATE KEY UPDATE VALUE = '0';
 
 -- Accès et droits
 
@@ -101,6 +102,7 @@ INSERT INTO grr_setting VALUES ('pass_leng', '32') ON DUPLICATE KEY UPDATE VALUE
 -- Activation de modules
 
 INSERT INTO grr_setting VALUES ('module_multisite', 'Oui') ON DUPLICATE KEY UPDATE VALUE = 'Oui';
+INSERT INTO grr_setting VALUES ('use_fckeditor', '1') ON DUPLICATE KEY UPDATE VALUE = '1';
 
 -- Utilisateurs 
 

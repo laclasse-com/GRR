@@ -55,8 +55,6 @@ $user_code_fonction = highestLaclasseProfile($user_data);
 $user_statut = statut_grrFromLaclasseProfile($user_code_fonction);
 if(!isset($user_statut)) {
     // Show error screen or move that further down
-    // TODO Create an error page   
-    $redirect_url = url_origin($_SERVER);
     include "forbidden.php";
     die;
 }

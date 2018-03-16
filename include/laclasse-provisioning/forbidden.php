@@ -16,6 +16,5 @@
                 <?php echo Settings::get('message_home_page'); ?>
             </p>
         </div>
-        <footer><p>Retour sur <a href="<?php echo $redirect_url ?>">Laclasse.com</a></p></footer>
         </body>
 </html>
