@@ -222,11 +222,7 @@ function populate_user_site($user_data) {
                         (login, id_site)
                         VALUES('$user_data->id',$user_site->id)";
 				grr_sql_command($sql);
-				array_push($user_site_rows,(object) [
-					'id' => $user_site->id,
-					'sitecode' => $profile->structure_id,
-					'login' => $user_data->id
-				]);
+				$user_site->login =  $user_data->id;
 			}
         }
     }
