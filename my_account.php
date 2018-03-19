@@ -234,7 +234,7 @@ if ($res)
 			dataType: "html",
 			data: {
 				id_site: $('#id_site').val(),
-				default_area : '<?php echo Settings::get("default_area"); ?>',
+				default_area : '<?php echo $default_area ?>',
 				session_login:'<?php echo getUserName(); ?>',
 				use_site:'<?php echo $use_site; ?>',
 				type:'domaine',
@@ -254,7 +254,7 @@ if ($res)
 			dataType: "html",
 			data: {
 				id_area:$('id_area').serialize(true),
-				default_room : '<?php echo Settings::get("default_room"); ?>',
+				default_room : '<?php echo $default_room; ?>',
 				type:'ressource',
 				action:+action,
 				},

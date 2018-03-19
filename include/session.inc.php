@@ -653,7 +653,7 @@ if ($row[6] > 0)
 	$_SESSION['default_area'] = $row[6];
 else
 	$_SESSION['default_area'] = Settings::get("default_area");
-if ($row[7] > 0)
+if ($row[7] < 0)
 	$_SESSION['default_room'] = $row[7];
 else
 	$_SESSION['default_room'] = Settings::get("default_room");
