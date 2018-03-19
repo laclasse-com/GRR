@@ -162,12 +162,8 @@ function populate_user_admin_site($user_data) {
                 $sql = "INSERT INTO ".TABLE_PREFIX."_j_useradmin_site
                         (login, id_site)
                         VALUES('$user_data->id',$useradmin_site->id)";
-				grr_sql_command($sql);
-				array_push($user_site_rows,(object) [
-					'id' => $user_site->id,
-					'sitecode' => $profile->structure_id,
-					'login' => $user_data->id
-				]);
+				grr_sql_command($sql);	
+				$useradmin_site->login =  $user_data->id;
 			}
         }
     }
