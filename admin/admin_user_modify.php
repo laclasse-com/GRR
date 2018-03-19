@@ -354,10 +354,10 @@ else
 <p class="bold">
 	| <a href="admin_user.php?display=<?php echo $display; ?>"><?php echo get_vocab("back"); ?></a> |
 	<?php
-	if (isset($user_login) && ($user_login != ''))
-	{
-		echo "<a href=\"admin_user_modify.php?display=$display\">".get_vocab("display_add_user")."</a> | ";
-	}
+	// if (isset($user_login) && ($user_login != ''))
+	// {
+	// 	echo "<a href=\"admin_user_modify.php?display=$display\">".get_vocab("display_add_user")."</a> | ";
+	// }
 	?>
 	<br /><?php echo get_vocab("required"); ?>
 </p>
