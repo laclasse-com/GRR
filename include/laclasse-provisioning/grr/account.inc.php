@@ -124,11 +124,16 @@ function handle_laclasse_sso_login($_login, $account_data) {
 /**
  * Met à jour la table d'administration des sites pour l'utilisateur venant de
  * se connecter
+ * 
+ * Ne le fait seulement que pour les utilisateur non super-admin
+ * (car eux peuvent déjà gérer tout les sites)
  *
  * @param mixed $user_data
  * @return void
  */
 function populate_user_admin_site($user_data) {
+	if ($user_data->super_admin) return;
+	
     // Récupérer les sites existant pour l'utilisateur connecté si login est
     // null cela veut dire que l'utilisateur n'est pas un admin du site
 
