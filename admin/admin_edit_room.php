@@ -512,10 +512,13 @@ if ((!empty($room)) || (isset($area_id)))
 				echo " selected=\"selected\" ";
 			echo ">".get_vocab("visu_fiche_description5")."</option>\n";
 		};
-		echo "<option value=\"6\" ";
-		if ($row["who_can_see"] == 6)
-			echo " selected=\"selected\" ";
-		echo ">".get_vocab("visu_fiche_description6")."</option>\n</select></td></tr>\n";
+		if( authGetUserLevel(getUserName(),-1) == 6 ) {
+			echo "<option value=\"6\" ";
+			if ($row["who_can_see"] == 6)
+				echo " selected=\"selected\" ";
+			echo ">".get_vocab("visu_fiche_description6")."</option>\n";
+		}
+		echo "</select></td></tr>\n";
 		// Declarer ressource indisponible
 		echo "<tr><td>".get_vocab("declarer_ressource_indisponible")."<br /><i>".get_vocab("explain_max_booking")."</i></td><td><input type=\"checkbox\" name=\"statut_room\" ";
 		if ($row['statut_room'] == "0")
