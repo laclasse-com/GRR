@@ -46,7 +46,18 @@ if ((Settings::get("authentification_obli") == 0) && (getUserName() == ''))
 else
 	$type_session = "with_session";
 unset($reg_statut_id);
-$reg_statut_id = isset($_GET["statut_id"]) ? $_GET["statut_id"] : "";
+if( isset( $_GET["statut_id"] ) ) {
+	$reg_statut_id = in_array( $_GET["statut_id"], array('y','e','-') ) ? $_GET["statut_id"] : false;
+} else {
+	$reg_statut_id = '';
+}
+
+if( $reg_statut_id === false ) {
+	http_response_code(400);
+	fatal_error(0, get_vocab( 'validation_error' ) );
+	die();
+}
+
 if (isset($_GET["id"]))
 {
 	$id = $_GET["id"];
@@ -59,7 +70,7 @@ if (isset($_SERVER['HTTP_REFERER']))
 	$back = htmlspecialchars($_SERVER['HTTP_REFERER']);
 if (isset($_GET["action_moderate"])){
 	moderate_entry_do($id,$_GET["moderate"], $_GET["description"]);
-	header("Location:".$_GET['page'].".php");
+	header("Location:".$page.".php");
 }
 $sql = "SELECT ".TABLE_PREFIX."_entry.name,
 ".TABLE_PREFIX."_entry.description,
@@ -271,9 +282,9 @@ if (strstr ($back, 'view_entry.php'))
 		$month = date ('m', $row1['0']);
 		$day = date ('d', $row1['0']);
 		$back = $page.'.php?year='.$year.'&amp;month='.$month.'&amp;day='.$day;
-		if ((isset($_GET["page"])) && (($_GET["page"] == "week") || ($_GET["page"] == "month") || ($_GET["page"] == "week_all") || ($_GET["page"] == "month_all")))
+		if (($page == "week") || ($page == "month") || ($page == "week_all") || ($page == "month_all"))
 			$back .= "&amp;area=".mrbsGetRoomArea($row1['1']);
-		if ((isset($_GET["page"])) && (($_GET["page"] == "week") || ($_GET["page"] == "month")))
+		if ((($page == "week") || ($page == "month")))
 			$back .= "&amp;room=".$row1['1'];
 	}
 	else
@@ -567,7 +578,16 @@ echo '<fieldset><legend style="font-size:12pt;font-weight:bold">'.get_vocab('ent
 				if ($can_delete_or_create == "y")
 				{
 					$message_confirmation = str_replace("'", "\\'", get_vocab("confirmdel").get_vocab("deleteentry"));
-                    $room_back = isset($_GET['room_back']) ? $_GET['room_back'] : $room_id ;
+				if(isset($_GET['room_back']) ) {
+					$room_back = ($_GET['room_back'] == 'all' || is_numeric($_GET['room_back']) || ctype_digit($_GET['room_back'])) ? $_GET['room_back'] : false;
+				} else {
+					$room_back = $room_id;
+				}
+				if($room_back === false) {
+					http_response_code(400);
+					fatal_error( 0, get_vocab( 'validation_error') );
+					die();
+				}
                 echo '<a class="btn btn-danger" type="button" href="del_entry.php?id='.$id.'&amp;series=0&amp;page='.$page.'&amp;room_back='.$room_back.' "  onclick="return confirm(\''.$message_confirmation.'\');">'.get_vocab("deleteentry").'</a>';
 				}
             echo "</td>";
@@ -662,8 +682,7 @@ if ($repeat_id != 0)
         echo "<form action=\"view_entry.php\" method=\"get\">\n";
         echo "<input type=\"hidden\" name=\"action_moderate\" value=\"y\" />\n";
         echo "<input type=\"hidden\" name=\"id\" value=\"".$id."\" />\n";
-        if (isset($_GET['page']))
-            echo "<input type=\"hidden\" name=\"page\" value=\"".$_GET['page']."\" />\n";
+        echo "<input type=\"hidden\" name=\"page\" value=\"".$page."\" />\n";
         echo "<fieldset><legend style=\"font-weight:bold\">".get_vocab("moderate_entry")."</legend>\n";
         echo "<p>";
         echo "<input type=\"radio\" name=\"moderate\" value=\"1\" checked=\"checked\" />".get_vocab("accepter_resa");
@@ -717,7 +736,7 @@ if ($repeat_id != 0)
                 echo "<input type=\"hidden\" name=\"mail_exist\" value=\"".$mail_exist."\" />";
             }
          /*   if ((!(Settings::get("automatic_mail") == 'yes')) || ($mail_exist == ""))
-                echo "<br /><i>(".get_vocab("necessite fonction mail automatique").")</i>"; en doublon ? YN */ 
+                echo "<br /><i>(".get_vocab("necessite fonction mail automatique").")</i>"; en doublon ? YN */
             echo "<br /><div style=\"text-align:center;\"><input class=\"btn btn-primary\" type=\"submit\" name=\"ok\" value=\"".get_vocab("save")."\" /></div></fieldset>\n";
             echo "<div><input type=\"hidden\" name=\"day\" value=\"".$day."\" />";
             echo "<input type=\"hidden\" name=\"month\" value=\"".$month."\" />";
@@ -740,7 +759,7 @@ if ($repeat_id != 0)
                 echo " checked ";
             echo " /> ".get_vocab("msg_clef");
         }
-        
+
         if (Settings::get('show_courrier') == 'y')
         {
             echo "<br /><span class=\"larger\">".get_vocab("status_courrier").get_vocab("deux_points")."</span>";

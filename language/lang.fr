@@ -985,4 +985,5 @@ $vocab['OU'] = "OU";
 $vocab['show_all_rooms'] = "Voir toutes les ressources de tous les domaines";
 $vocab['choose_room'] = "Sélectionnez une ressource ou cliquez sur ce ";
 $vocab["link"] = "lien";
+$vocab['validation_error'] = "Les valeurs entrées ne correspondent pas à ce qui est attendu";
 ?>

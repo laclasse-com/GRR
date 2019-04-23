@@ -52,9 +52,28 @@ else
 	$class_image = "image";
 // initialisation des paramètres de temps
 $date_now = time();
-$day = (isset($_GET['day']))? $_GET['day'] : date("d"); // ou 1 ? YN le 07/03/2018
-$month = (isset($_GET['month']))? $_GET['month'] : date("m");
-$year = (isset($_GET['year']))? $_GET['year'] : date("Y");
+if( isset( $_GET['day'] ) ) {
+	$day = ( preg_match( '/^\d{1,2}$/', $_GET['day'] ) )? $_GET['day'] : false;
+} else {
+	$day = date('d');
+}
+if( isset($_GET['month']) ) {
+	$month = ( preg_match( '/^\d{1,2}$/', $_GET['month'] ) )? $_GET['month'] : false;
+} else {
+	$month = date('m');
+}
+if (isset($_GET['year'])) {
+	$year = ( preg_match( '/^\d{4}$/', $_GET['year'] ) )? $_GET['year'] : false;
+} else {
+	$year = date('Y');
+}
+
+if($day === false || $month === false || $year === false) {
+	http_response_code(400);
+	fatal_error(0, get_vocab( 'validation_error' ) );
+	die();
+}
+
 
 /*if (empty($month) || empty($year) || !checkdate($month, 1, $year))
 {
@@ -121,7 +140,7 @@ if (Settings::get("verif_reservation_auto") == 0)
 }
 
 // Dans le cas de l'affichage d'une unique ressource
-if(isset($_GET['room']))
+if(isset($room))
 {
 	// Calcul du niveau d'accès aux fiche de réservation détaillées des ressources
 	$acces_fiche_reservation	= verif_acces_fiche_reservation(getUserName(), $room);

@@ -308,9 +308,9 @@ if (strstr ($back, 'validation.php'))
 		$month = date ('m', $row1['0']);
 		$day = date ('d', $row1['0']);
 		$back = $page.'.php?year='.$year.'&amp;month='.$month.'&amp;day='.$day;
-		if ((isset($_GET["page"])) && (($_GET["page"] == "week") || ($_GET["page"] == "month") || ($_GET["page"] == "week_all") || ($_GET["page"] == "month_all")))
+		if ((isset($page)) && (($page == "week") || ($page == "month") || ($page == "week_all") || ($page == "month_all")))
 			$back .= "&amp;area=".mrbsGetRoomArea($row1['1']);
-		if ((isset($_GET["page"])) && (($_GET["page"] == "week") || ($_GET["page"] == "month")))
+		if ((isset($page)) && (($page == "week") || ($page == "month")))
 			$back .= "&amp;room=".$row1['1'];
 	}
 	else
@@ -685,8 +685,7 @@ echo '<fieldset><legend style="font-size:12pt;font-weight:bold">'.get_vocab('ent
 					echo "<form action=\"validation.php\" method=\"get\">\n";
 					echo "<input type=\"hidden\" name=\"action_moderate\" value=\"y\" />\n";
 					echo "<input type=\"hidden\" name=\"id\" value=\"".$id."\" />\n";
-					if (isset($_GET['page']))
-						echo "<input type=\"hidden\" name=\"page\" value=\"".$_GET['page']."\" />\n";
+					echo "<input type=\"hidden\" name=\"page\" value=\"".$page."\" />\n";
 					echo "<fieldset><legend style=\"font-weight:bold\">".get_vocab("moderate_entry")."</legend>\n";
 					echo "<p>";
 					echo "<input type=\"radio\" name=\"moderate\" value=\"1\" checked=\"checked\" />".get_vocab("accepter_resa");
