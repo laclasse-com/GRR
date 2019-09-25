@@ -30,7 +30,7 @@ require_once("./include/session.inc.php");
 include "include/resume_session.php";
 include "include/language.inc.php";
 setlocale(LC_TIME, 'french');
-if ("POST" == $_SERVER['REQUEST_METHOD']) 
+if ("POST" == $_SERVER['REQUEST_METHOD'])
 {
 	$logo = $_POST['logo'];
 	$etablisement = $_POST['etat'];
@@ -52,7 +52,7 @@ if ("POST" == $_SERVER['REQUEST_METHOD'])
 	$finPeriode= $_POST['finPeriode'];
 	$jourPeriode = $_POST['jourPeriode'];
 	$cle = $_POST['cle'];
-	
+
 	if ($period == 0){
 		include 'pdf/pdf_ResUnique.php';
 	}else{
@@ -62,9 +62,10 @@ if ("POST" == $_SERVER['REQUEST_METHOD'])
 }
 else
 {
-	if (isset($_GET['id']))
-		$id = $_GET['id'];
-	else
+	if (isset($_GET['id'])){
+		$id = htmlspecialchars($_GET['id']);
+		settype($id,"integer");
+	} else
 		header('Location: '.Settings::get("grr_url"));
 	$sql = "SELECT * FROM ".TABLE_PREFIX."_entry WHERE id='".$id."'";
 	$res = grr_sql_query($sql);
@@ -78,11 +79,11 @@ else
 
 
 	$res2 = grr_sql_query("SELECT rep_type, end_date, rep_opt, rep_num_weeks, start_time, end_time FROM ".TABLE_PREFIX."_repeat WHERE id=$row[4]");
-				
+
 	if (!$res2)
 		fatal_error(0, grr_sql_error());
-				
-	if (grr_sql_count($res2) == 1){	
+
+	if (grr_sql_count($res2) == 1){
 		$row6 = grr_sql_row($res2, 0);
 		$rep_type = $row6[0];
 		$rep_end_date = utf8_strftime($dformat,$row6[1]);
@@ -92,7 +93,7 @@ else
 		$end_time = $row6[5];
 		$duration = $row6[5] - $row6[4];
 	}
-	
+
 	if ($row[4]!=0){
 		$period = 1;
 	}else{
