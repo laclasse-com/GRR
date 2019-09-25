@@ -52,7 +52,7 @@ $nb_year_calendar = 10;
 */
 // putenv("TZ=posix/Etc/GMT+0");
 // putenv("TZ=America/Toronto");
-/* pour compatibilité php >= 5.1.0 et php 7, on n'utilisera pas la fonction ptuenv et la constante TZ, mais la fonction 
+/* pour compatibilité php >= 5.1.0 et php 7, on n'utilisera pas la fonction ptuenv et la constante TZ, mais la fonction
 date_default_timezone_set("votre_time_zone"); en remplaçant "votre_time_zone" par votre time zone, dont la liste est disponible ici :
 http://php.net/manual/fr/timezones.php
 */
@@ -101,10 +101,10 @@ date_default_timezone_set('Europe/Paris');
  $use_function_html_entity_decode = 1;
 
 #Requiert Connexion pour mettre à jour la BDD || 0: non ; 1: oui - Defaut 1
-$connexionAdminMAJ = 1;
+$connexionAdminMAJ = 0;
 
 #L'admin peut restaurer une base depuis l'administration || 0: non ; 1: oui - Defaut 1
-$restaureBBD = 1;
+$restaureBBD = 0;
 
 #Mode debug || 0: non ; 1: oui - Defaut 0
 $debug_flag = 0;
@@ -113,7 +113,7 @@ $debug_flag = 0;
 $recherche_MAJ = 0;
 
 #Possibilité d'upload de module || 0: non ; 1: oui - Defaut 1
-$upload_Module = 1;
+$upload_Module = 0;
 
 # Nb de jour maximum que l'on garde les logs de connexions, 0 = aucune limite
 $nbMaxJoursLogConnexion = 365;
