@@ -101,7 +101,7 @@ date_default_timezone_set('Europe/Paris');
  $use_function_html_entity_decode = 1;
 
 #Requiert Connexion pour mettre à jour la BDD || 0: non ; 1: oui - Defaut 1
-$connexionAdminMAJ = 0;
+$connexionAdminMAJ = 1;
 
 #L'admin peut restaurer une base depuis l'administration || 0: non ; 1: oui - Defaut 1
 $restaureBBD = 0;
